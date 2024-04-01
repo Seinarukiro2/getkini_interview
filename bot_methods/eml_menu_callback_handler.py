@@ -1,7 +1,6 @@
 import os
 import email
 from bs4 import BeautifulSoup
-from telethon.tl.types import DocumentAttributeFilename
 from datetime import datetime
 import json
 import xml.etree.ElementTree as ET
@@ -75,12 +74,33 @@ async def handle_callback(event, callback_data) -> None:
                 if body:
                     body = '\n'.join(line.strip() for line in body.splitlines() if line.strip())
 
+                # Search for position using regular expressions
+                position = None
+                position_match = re.search(r'Bewerbung\s+als\s+(.*?)$', body, re.IGNORECASE | re.MULTILINE)
+                if position_match:
+                    position = position_match.group(1).strip()
+                
+                # Search for RefNr using regular expressions
+                ref_nr = None
+                ref_nr_match = re.search(r'(?:Ref(?:erenz)?\s*|Referenznummer|ref(?:erence)?\s*|ref\s*|Referal\s*|referal\s*|Referal\s*Number|RefNr\.?\s*-?)\s*[:\.]?\s*(\d{6,}-[a-zA-Z\d]+)', body, re.IGNORECASE)
+                if ref_nr_match:
+                    ref_nr = ref_nr_match.group(1)
+
+                # Search for company using regular expressions
+                company = None
+                company_match = re.search(r'bei\s+(.*?)\s+ausgeschriebene\s+Stelle', body, re.IGNORECASE)
+                if company_match:
+                    company = company_match.group(1)
+
                 # Prepare JSON response
                 json_response = {
                     "sender": sender,
                     "subject": subject,
                     "date_sent": date_sent,
                     "to": to,
+                    "position": position if position else "(Position not found)",
+                    "company": company if company else "(Company not found)",
+                    "ref_nr": ref_nr if ref_nr else "(RefNr not found)",
                     "body": body if body else "(No text body found)"
                 }
 
@@ -90,6 +110,9 @@ async def handle_callback(event, callback_data) -> None:
                 ET.SubElement(xml_response, "subject").text = subject
                 ET.SubElement(xml_response, "date_sent").text = date_sent
                 ET.SubElement(xml_response, "to").text = to
+                ET.SubElement(xml_response, "position").text = position if position else "(Position not found)"
+                ET.SubElement(xml_response, "company").text = "(Company not found)"
+                ET.SubElement(xml_response, "ref_nr").text = ref_nr if ref_nr else "(RefNr not found)"
                 ET.SubElement(xml_response, "body").text = body if body else "(No text body found)"
                 xml_string = ET.tostring(xml_response, encoding='unicode')
 
