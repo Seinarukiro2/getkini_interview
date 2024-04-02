@@ -10,7 +10,7 @@ class TestSendApplication(unittest.TestCase):
         mock_response.status_code = 401
         return mock_response
 
-    @patch("send_application.requests.post")
+    @patch("functions.new_application_request.send_application")
     def test_send_application_token_required(self, mock_post):
         mock_post.side_effect = self.mock_post_401
 

@@ -31,12 +31,10 @@ def process_email(eml_filename) -> Dict:
             subject = msg["Subject"]
             to = msg["To"]
 
-            # Extract ID from 'to' field
             id_match = re.search(r"\+(.*?)@", to)
             id_value = id_match.group(1) if id_match else None
 
-            # Try to find date_sent from different parts of the email
-            # First, try to find in the main headers
+            # try to find in the main headers
             date_sent = msg["Date"]
 
             # Then, try to find in the HTML body if available
@@ -62,7 +60,9 @@ def process_email(eml_filename) -> Dict:
                             errors="ignore"
                         )
                         # Use regular expression to find date at the top of the plain text body
-                        date_match = re.search(r"\b\d{2}\.\d{2}\.\d{4}\b", plain_text_content)
+                        date_match = re.search(
+                            r"\b\d{2}\.\d{2}\.\d{4}\b", plain_text_content
+                        )
                         if date_match:
                             date_text = date_match.group(0)
                             try:
@@ -115,12 +115,16 @@ def process_email(eml_filename) -> Dict:
 
             # Extracting user's name and last name from the subject field
             name, last_name = None, None
-            name_match = re.search(r'Mit freundlichen Gren\n(.*?)\s(.*?)\s', body)
+            name_match = re.search(r"Mit freundlichen Gren\n(.*?)\s(.*?)\s", body)
             if name_match:
                 name, last_name = name_match.groups()
 
             # Extracting email from Kontaktdaten section
-            email_match = re.search(r"Kontaktdaten(?:\s*|\n(?:.*?\n)*?)([\w.-]+@[\w.-]+)", body, re.IGNORECASE)
+            email_match = re.search(
+                r"Kontaktdaten(?:\s*|\n(?:.*?\n)*?)([\w.-]+@[\w.-]+)",
+                body,
+                re.IGNORECASE,
+            )
             email_address = email_match.group(1) if email_match else None
 
             # Search for location using regular expressions
@@ -128,7 +132,6 @@ def process_email(eml_filename) -> Dict:
             location_match = re.search(r"in\s+([^\n]+)", body, re.IGNORECASE)
             if location_match:
                 location = location_match.group(1).strip()
-
 
             # Check for attachments
             for part in msg.walk():
@@ -155,9 +158,13 @@ def process_email(eml_filename) -> Dict:
                 "attachments": attachments,
                 "name": name if name else "(Name not found)",
                 "last_name": last_name if last_name else "(Last name not found)",
-                "full_name": f"{name} {last_name}" if name and last_name else "(Full name not found)",
+                "full_name": (
+                    f"{name} {last_name}"
+                    if name and last_name
+                    else "(Full name not found)"
+                ),
                 "email": email_address if email_address else "(Email not found)",
-                "location": location if location else "(Location not found)"
+                "location": location if location else "(Location not found)",
             }
             print(email_data)
     return email_data
