@@ -1,13 +1,8 @@
 import os
-import email
-from bs4 import BeautifulSoup
-from datetime import datetime
 from functions.eml_worker import process_email
-import json
-import xml.etree.ElementTree as ET
-import re
 
-async def handle_callback(event, callback_data) -> None:
+
+async def send_email_data(event, callback_data) -> None:
     """
     Handle callback data from inline buttons.
 
@@ -18,13 +13,14 @@ async def handle_callback(event, callback_data) -> None:
     Returns:
         None
     """
+
     if callback_data.startswith("view_eml_"):
         # Extract the filename from the callback data
-        eml_filename = callback_data[len("view_eml_"):]
+        eml_filename = callback_data[len("view_eml_") :]
 
         # Get absolute path to the 'data' directory
         script_dir = os.getcwd()  # Get the current working directory
-        data_dir = os.path.join(script_dir, 'data')
+        data_dir = os.path.join(script_dir, "data")
 
         # Construct the full path to the EML file
         eml_file_path = os.path.join(data_dir, eml_filename)
@@ -43,8 +39,8 @@ async def handle_callback(event, callback_data) -> None:
                 body = email_data["body"]
                 attachments = email_data["attachments"]
 
-                # Prepare message text
-                message_text = f"Sender: {sender}\nSubject: {subject}\nDate Sent: {date_sent}\nTo: {to}\nPosition: {position}\nCompany: {company}\nRef Nr: {ref_nr}\n\n{body}"
+                # Prepare message text with body without newlines
+                message_text = f"Sender: {sender} Subject: {subject} Date Sent: {date_sent} To: {to} Position: {position} Company: {company} Ref Nr: {ref_nr} {body}"
 
                 # Send message text
                 await event.respond(message_text)
@@ -54,7 +50,9 @@ async def handle_callback(event, callback_data) -> None:
                     for filename in attachments:
                         if os.path.exists(filename):  # Check if file exists
                             await event.respond(f"Sending attachment: {filename}")
-                            await event.client.send_file(event.chat_id, filename, force_document=True)
+                            await event.client.send_file(
+                                event.chat_id, filename, force_document=True
+                            )
                             os.remove(filename)  # Remove the file after sending
                         else:
                             await event.respond(f"Attachment not found: {filename}")

@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 bot_session.session
 secrets.py
+.vscode/settings.json

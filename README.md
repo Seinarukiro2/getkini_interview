@@ -15,7 +15,7 @@ To get started, follow these simple steps:
 
 ## Goals
 
-My primary goal is to implement artificial intelligence for automated resume parsing and data extraction using the Chat-GPT-3.5-Turbo model. Additionally, we aim to deploy an isolated model on a personal server for commercial use.
+My primary goal is to implement artificial intelligence for automated resume parsing and data extraction using the Chat-GPT-3.5-Turbo model. Additionally, I aim to deploy an isolated model on a personal server for commercial use.
 
 ## License
 
