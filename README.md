@@ -8,10 +8,11 @@ To get started, follow these simple steps:
 
 1. Install all dependencies by running the following command:
 `pip install -r requirements.txt`
-2. Run the application using the following command:
+2. Create a new bot in Telegram using [BotFather](https://t.me/BotFather) and obtain its token.
+3. After obtaining the token, run the application using the following command and enter the token:
 `python3 main.py`
 
-3. All resumes are stored in the `data` folder in the `.eml` format.
+4. All resumes are stored in the `data` folder in the `.eml` format.
 
 ## Goals
 
