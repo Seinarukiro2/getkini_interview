@@ -4,10 +4,9 @@ from bot_methods import (
     eml_view_callback_handler,
     eml_post_callback_handler,
 )
+from secrets import API_ID, API_HASH
 
-import secrets
-
-client: TelegramClient = TelegramClient("bot_session", secrets.API_ID, secrets.API_HASH)
+client: TelegramClient = TelegramClient("bot_session", API_ID, API_HASH)
 
 
 async def send_menu(event: events.NewMessage.Event) -> None:
